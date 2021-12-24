@@ -1,0 +1,21 @@
+{
+  "config_payload": {
+    "project_id": "projectid123456",
+    "project_name": "projectnameABC",
+    "station_id": "stationid123456",
+    "station_name": "stationnameABC"
+  },
+  "config_mqtt": {
+    "MQTT_HOST": "mqttserver.tk",
+    "MQTT_PORT": "1883",
+    "MQTT_USERNAME": "mqttbroker",
+    "MQTT_PASSWORD": "Mqtt!@#456",
+    "MQTT_TOPIC": "/tram_chim_monitoring/dong_thap/"
+  },
+  "config_serial": {
+    "SERIAL_PORT_NBIOT": "/dev/ttyS0",
+    "BAUD_RATE_NBIOT": 9600,
+    "SERIAL_PORT_SENSOR": "/dev/ttyUSB0",
+    "BAUD_RATE_SENSOR": 9600
+  }
+}

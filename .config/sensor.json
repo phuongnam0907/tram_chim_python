@@ -1,0 +1,142 @@
+[
+  {
+    "sensor_name": "gemho_001_temp_soil",
+    "sensor_unit": 0.1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      0,
+      0,
+      1,
+      132,
+      57
+    ]
+  },
+  {
+    "sensor_name": "gemho_001_hum_soil",
+    "sensor_unit": 1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      1,
+      0,
+      1,
+      213,
+      249
+    ]
+  },
+  {
+    "sensor_name": "gemho_001_ec",
+    "sensor_unit": 1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      4,
+      0,
+      1,
+      197,
+      248
+    ]
+  },
+  {
+    "sensor_name": "gemho_002_temperature",
+    "sensor_unit": 0.1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      0,
+      0,
+      1,
+      132,
+      57
+    ]
+  },
+  {
+    "sensor_name": "gemho_002_humidity",
+    "sensor_unit": 1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      1,
+      0,
+      1,
+      213,
+      249
+    ]
+  },
+  {
+    "sensor_name": "gemho_002_co2",
+    "sensor_unit": 1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      4,
+      0,
+      1,
+      197,
+      248
+    ]
+  },
+  {
+    "sensor_name": "gemho_003_temperature",
+    "sensor_unit": 0.1,
+    "sensor_byte": [
+      3,
+      3,
+      0,
+      0,
+      0,
+      1,
+      133,
+      232
+    ]
+  },
+  {
+    "sensor_name": "gemho_003_humidity",
+    "sensor_unit": 1,
+    "sensor_byte": [
+      3,
+      3,
+      0,
+      1,
+      0,
+      1,
+      212,
+      40
+    ]
+  },
+  {
+    "sensor_name": "gemho_004_pm25",
+    "sensor_unit": 1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      0,
+      0,
+      1,
+      132,
+      57
+    ]
+  },
+  {
+    "sensor_name": "gemho_004_pm25",
+    "sensor_unit": 1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      1,
+      0,
+      1,
+      213,
+      249
+    ]
+  }
+]
