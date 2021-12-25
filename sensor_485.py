@@ -2,7 +2,7 @@
 
 # DEFINITION
 
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import serial
 import time
 import json
@@ -135,106 +135,108 @@ def get_sensors_value():
     for item in LIST_SENSORS:
         try:
             # serial_sensor.write(serial.to_bytes(item['sensor_byte']))
-            time.sleep(1)
+            # time.sleep(1)
             data_payload['data_sensor'][item['sensor_name']] = round(read_serial() * item['sensor_unit'], 0 if isinstance(item['sensor_unit'], int) else 1 )
         except:
             # print("get_sensors_value: get FAILED")
             pass
 
-# def powerOn(powerKey):
-#     print("SIM7070X is starting:")
-#     GPIO.setmode(GPIO.BCM)
-#     GPIO.setwarnings(False)
-#     GPIO.setup(powerKey, GPIO.OUT)
-#     time.sleep(0.1)
-#     GPIO.output(powerKey, GPIO.HIGH)
-#     time.sleep(2)
-#     GPIO.output(powerKey, GPIO.LOW)
-#     time.sleep(5)
-#     serial_nbiot.flushInput()
-#     print("SIM7070X is ready")
-#
-#
-# def powerDown(powerKey):
-#     print('SIM7070X is loging off:')
-#     GPIO.setmode(GPIO.BCM)
-#     GPIO.setwarnings(False)
-#     GPIO.setup(powerKey, GPIO.OUT)
-#     GPIO.output(powerKey, GPIO.HIGH)
-#     time.sleep(1)
-#     GPIO.output(powerKey, GPIO.LOW)
-#     time.sleep(3)
-#     print('Good bye')
-#
-#
-# def sendAt(command, back, timeout):
-#     rec_buff = ""
-#     serial_nbiot.write((command + '\r\n').encode())
-#     time.sleep(timeout)
-#     if serial_nbiot.inWaiting():
-#         time.sleep(0.1)
-#         rec_buff = serial_nbiot.read(serial_nbiot.inWaiting())
-#     if rec_buff != "":
-#         if back not in rec_buff.decode():
-#             print(command + ' back:\t' + rec_buff.decode())
-#             return 0
-#         else:
-#             print(rec_buff.decode())
-#             return 1
-#     else:
-#         print(command + ' no responce')
-#
-#
-# def checkStart():
-#     while True:
-#         # simcom module uart may be fool,so it is better to send much times when it starts.
-#         serial_nbiot.write('AT\r\n'.encode())
-#         time.sleep(1)
-#         serial_nbiot.write('AT\r\n'.encode())
-#         time.sleep(1)
-#         serial_nbiot.write('AT\r\n'.encode())
-#         time.sleep(1)
-#         if serial_nbiot.inWaiting():
-#             time.sleep(0.01)
-#             recBuff = serial_nbiot.read(serial_nbiot.inWaiting())
-#             print('SOM7080X is ready\r\n')
-#             print('try to start\r\n' + recBuff.decode())
-#             if 'OK' in recBuff.decode():
-#                 recBuff = ''
-#                 break
-#         else:
-#             powerOn(POWER_KEY)
-#
-#
-# def send_data():
-#     try:
-#         powerDown(POWER_KEY)
-#         checkStart()
-#         print('wait for signal')
-#         time.sleep(10)
-#         sendAt('AT+CSQ', 'OK', 1)
-#         sendAt('AT+CNMP=38', 'OK', 1)
-#         sendAt('AT+CGREG?', '+CGREG: 0,1', 0.5)
-#         sendAt('AT+CNACT=0,1', 'OK', 1)
-#         sendAt('AT+CACID=0', 'OK', 1)
-#         # getGpsPosition()
-#         sendAt('AT+SMCONF=\"CLIENTID\",id_' + str(current_milli_time()), 'OK', 0.25)
-#         sendAt('AT+SMCONF=\"USERNAME\",' + MQTT_USERNAME, 'OK', 0.25)
-#         sendAt('AT+SMCONF=\"PASSWORD\",' + MQTT_PASSWORD, 'OK', 0.25)
-#         sendAt('AT+SMCONF=\"URL\",' + MQTT_PORT + ',' + MQTT_PORT, 'OK', 0.25)
-#         sendAt('AT+SMCONF=\"KEEPTIME\",60', 'OK', 0.25)
-#         sendAt('AT+SMCONN', 'OK', 5)
-#         sendAt('AT+SMPUB=\"' + MQTT_TOPIC + '\",' + str(len(json.dumps(data_payload))) + ',0,0', 'OK', 1)
-#         serial_nbiot.write(json.dumps(data_payload).encode())
-#         time.sleep(10)
-#         print('send message successfully!')
-#         sendAt('AT+SMDISC', 'OK', 1)
-#         sendAt('AT+CNACT=0,0', 'OK', 1)
-#         powerDown(POWER_KEY)
-#     except:
-#         print('send_data: Exception')
-#         powerDown(POWER_KEY)
-#         GPIO.cleanup()
+def powerOn(powerKey):
+    print("SIM7070X is starting:")
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(powerKey, GPIO.OUT)
+    time.sleep(0.1)
+    GPIO.output(powerKey, GPIO.HIGH)
+    time.sleep(2)
+    GPIO.output(powerKey, GPIO.LOW)
+    time.sleep(5)
+    serial_nbiot.flushInput()
+    print("SIM7070X is ready")
+
+
+def powerDown(powerKey):
+    print('SIM7070X is loging off:')
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(powerKey, GPIO.OUT)
+    GPIO.output(powerKey, GPIO.HIGH)
+    time.sleep(2)
+    GPIO.output(powerKey, GPIO.LOW)
+    time.sleep(5)
+    print('Good bye')
+
+
+def sendAt(command, back, timeout):
+    rec_buff = ""
+    serial_nbiot.write((command + '\r\n').encode())
+    time.sleep(timeout)
+    if serial_nbiot.inWaiting():
+        time.sleep(0.1)
+        rec_buff = serial_nbiot.read(serial_nbiot.inWaiting())
+    if rec_buff != "":
+        if back not in rec_buff.decode():
+            print(command + ' back:\t' + rec_buff.decode())
+            return 0
+        else:
+            print(rec_buff.decode())
+            return 1
+    else:
+        print(command + ' no responce')
+
+
+def checkStart():
+    while True:
+        # simcom module uart may be fool,so it is better to send much times when it starts.
+        serial_nbiot.write('AT\r\n'.encode())
+        time.sleep(1)
+        serial_nbiot.write('AT\r\n'.encode())
+        time.sleep(1)
+        serial_nbiot.write('AT\r\n'.encode())
+        time.sleep(1)
+        if serial_nbiot.inWaiting():
+            time.sleep(0.01)
+            recBuff = serial_nbiot.read(serial_nbiot.inWaiting())
+            print('SOM7080X is ready\r\n')
+            print('try to start\r\n' + recBuff.decode())
+            if 'OK' in recBuff.decode():
+                recBuff = ''
+                break
+        else:
+            powerOn(POWER_KEY)
+
+
+def send_data():
+    try:
+        powerDown(POWER_KEY)
+        checkStart()
+        print('wait for signal')
+        time.sleep(10)
+        sendAt('AT+CSQ', 'OK', 1)
+        sendAt('AT+CNMP=38', 'OK', 1)
+        sendAt('AT+CGREG?', '+CGREG: 0,1', 0.5)
+        sendAt('AT+CNACT=0,1', 'OK', 1)
+        sendAt('AT+CACID=0', 'OK', 1)
+        sendAt('AT+CNACT?', 'OK',1)
+        sendAt('AT+CNMP?', 'OK',1)
+        # getGpsPosition()
+        sendAt('AT+SMCONF=\"CLIENTID\",id_' + str(current_milli_time()), 'OK', 0.25)
+        sendAt('AT+SMCONF=\"USERNAME\",' + MQTT_USERNAME, 'OK', 0.25)
+        sendAt('AT+SMCONF=\"PASSWORD\",' + MQTT_PASSWORD, 'OK', 0.25)
+        sendAt('AT+SMCONF=\"URL\",' + MQTT_HOST + ',' + MQTT_PORT, 'OK', 0.25)
+        sendAt('AT+SMCONF=\"KEEPTIME\",60', 'OK', 0.25)
+        sendAt('AT+SMCONN', 'OK', 5)
+        sendAt('AT+SMPUB=\"' + MQTT_TOPIC + '\",' + str(len(json.dumps(data_payload))) + ',0,0', 'OK', 1)
+        serial_nbiot.write(json.dumps(data_payload).encode())
+        time.sleep(10)
+        print('send message successfully!')
+        sendAt('AT+SMDISC', 'OK', 1)
+        sendAt('AT+CNACT=0,0', 'OK', 1)
+        powerDown(POWER_KEY)
+    except:
+        print('send_data: Exception')
+        powerDown(POWER_KEY)
+        GPIO.cleanup()
 
 
 if __name__ == '__main__':
@@ -253,19 +255,6 @@ if __name__ == '__main__':
 
     while True:
         get_sensors_value()
-        print(data_payload)
-        # send_data()
+        # print(data_payload)
+        send_data()
         break
-    # serial_sensor.write(serial.to_bytes(gemho_002_temperature))
-    # time.sleep(1)
-    # readSerial()
-
-    # serial_sensor.write(serial.to_bytes(gemho_002_humidity))
-    # time.sleep(1)
-    # readSerial()
-
-    # serial_sensor.write(serial.to_bytes(gemho_002_co2))
-    # time.sleep(1)
-    # readSerial()
-    # sendData()
-    # time.sleep(10)
