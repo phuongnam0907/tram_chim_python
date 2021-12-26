@@ -8,8 +8,8 @@
   "config_mqtt": {
     "MQTT_HOST": "mqttserver.tk",
     "MQTT_PORT": "1883",
-    "MQTT_USERNAME": "mqttbroker",
-    "MQTT_PASSWORD": "Mqtt!@#456",
+    "MQTT_USERNAME": "tram_chim",
+    "MQTT_PASSWORD": "TramChimMQTT...",
     "MQTT_TOPIC": "/tram_chim_monitoring/dong_thap/"
   },
   "config_serial": {
