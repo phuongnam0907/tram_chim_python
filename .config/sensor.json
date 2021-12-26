@@ -1,7 +1,7 @@
 [
   {
     "sensor_name": "gemho_001_soil_temperature",
-    "sensor_unit": "°C",
+    "sensor_unit": "0C",
     "sensor_factor": 0.01,
     "sensor_byte": [
       1,
@@ -31,7 +31,7 @@
   },
   {
     "sensor_name": "gemho_soil_electrical_conductivity",
-    "sensor_unit": "μS/cm",
+    "sensor_unit": "uS/cm",
     "sensor_factor": 1,
     "sensor_byte": [
       1,
@@ -46,7 +46,7 @@
   },
   {
     "sensor_name": "gemho_002_temperature",
-    "sensor_unit": "°C",
+    "sensor_unit": "0C",
     "sensor_factor": 0.1,
     "sensor_byte": [
       2,
@@ -91,7 +91,7 @@
   },
   {
     "sensor_name": "gemho_003_temperature",
-    "sensor_unit": "°C",
+    "sensor_unit": "0C",
     "sensor_factor": 0.1,
     "sensor_byte": [
       3,
@@ -121,7 +121,7 @@
   },
   {
     "sensor_name": "gemho_004_pm25",
-    "sensor_unit": "μg/m³",
+    "sensor_unit": "ug/m3",
     "sensor_factor": 1,
     "sensor_byte": [
       4,
@@ -136,7 +136,7 @@
   },
   {
     "sensor_name": "gemho_004_pm10",
-    "sensor_unit": "μg/m³",
+    "sensor_unit": "ug/m3",
     "sensor_factor": 1,
     "sensor_byte": [
       4,

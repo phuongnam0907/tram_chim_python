@@ -1,9 +1,10 @@
 {
   "config_payload": {
-    "project_id": "projectid123456",
-    "project_name": "projectnameABC",
-    "station_id": "stationid123456",
-    "station_name": "stationnameABC"
+    "project_id": "TRC-001",
+    "project_name": "TRC-MOR",
+    "station_id": "TRC-S001",
+    "station_name": "TRC-S001",
+    "sensing_period": 600
   },
   "config_mqtt": {
     "MQTT_HOST": "mqttserver.tk",

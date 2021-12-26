@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 import serial
 import time
 import json
+import os
 
 """ 
 PUBLIC VARIABLES
@@ -23,6 +24,7 @@ BAUD_RATE_NBIOT = 9600
 SERIAL_PORT_SENSOR = ""
 BAUD_RATE_SENSOR = 9600
 LIST_SENSORS = []
+SENSING_PERIOD = 600 # 10 minutes default
 
 # Hardcode variables
 rec_buff = ''
@@ -50,12 +52,12 @@ SUB-FUNCTIONS
 def init_config_file():
     # get sensor config from json file
     global LIST_SENSORS
-    f = open(".config/sensor.json")
+    f = open("/home/pi/tram_chim_python/.config/sensor.json")
     LIST_SENSORS = json.load(f)
     f.close()
 
     # Open file .config/config.json
-    f = open(".config/config.json")
+    f = open("/home/pi/tram_chim_python/.config/config.json")
     temp_json = json.load(f)
 
     # get mqtt config from json file
@@ -73,6 +75,9 @@ def init_config_file():
     BAUD_RATE_NBIOT = temp_json['config_serial']['BAUD_RATE_NBIOT']
     BAUD_RATE_SENSOR = temp_json['config_serial']['BAUD_RATE_SENSOR']
 
+    # get program config from json file
+    SENSING_PERIOD = temp_json['config_payload']['sensing_period']
+
     # get project status from json file
     global data_payload
     data_payload['project_id'] = temp_json['config_payload']['project_id']
@@ -88,8 +93,8 @@ def parse_name_sensor():
     global data_payload
     temp_object = []
     for item in LIST_SENSORS:
-        temp_object.append({"sensor_name":item['sensor_name'], "sensor_unit": item['sensor_unit'], "sensor_value": -1.0})
-    data_payload['data_sensor'] = temp_object
+        temp_object.append({"ss_name":item['sensor_name'], "ss_unit": item['sensor_unit'], "ss_value": -1.0})
+    data_payload['data_ss'] = temp_object
     # print(data_payload)
 
 
@@ -141,14 +146,14 @@ def get_index_list_sensor(sensor_name):
 
 
 def get_sensors_value():
-    for item in data_payload['data_sensor']:
+    for item in data_payload['data_ss']:
         try:
-            ss_object = LIST_SENSORS[get_index_list_sensor(item['sensor_name'])]
+            ss_object = LIST_SENSORS[get_index_list_sensor(item['ss_name'])]
             ss_factor = ss_object['sensor_factor']
             ss_byte = ss_object['sensor_byte']
             serial_sensor.write(serial.to_bytes(ss_byte))
             time.sleep(1)
-            item['sensor_value'] = round(read_serial() * ss_factor, 0 if isinstance(ss_factor, int) else 1 )
+            item['ss_value'] = round(read_serial() * ss_factor, 0 if isinstance(ss_factor, int) else 1 )
         except:
             # print("get_sensors_value: get FAILED")
             pass
@@ -237,8 +242,8 @@ def send_data():
         sendAt('AT+SMCONF=\"PASSWORD\",' + MQTT_PASSWORD, 'OK', 0.25)
         sendAt('AT+SMCONF=\"URL\",' + MQTT_HOST + ',' + MQTT_PORT, 'OK', 0.25)
         sendAt('AT+SMCONF=\"KEEPTIME\",60', 'OK', 0.25)
-        sendAt('AT+SMCONN', 'OK', 5)
-        sendAt('AT+SMPUB=\"' + MQTT_TOPIC + '\",' + str(len(json.dumps(data_payload))) + ',0,0', 'OK', 1)
+        sendAt('AT+SMCONN', 'OK', 3)
+        sendAt('AT+SMPUB=\"' + MQTT_TOPIC + str(data_payload['station_id']) + '\",' + str(len(json.dumps(data_payload))) + ',1,0', 'OK', 2)
         serial_nbiot.write(json.dumps(data_payload).encode())
         time.sleep(10)
         print('send message successfully!')
@@ -265,8 +270,9 @@ if __name__ == '__main__':
         print("Cannot open Serial Port")
         pass
 
+    time.sleep(10)
     while True:
         get_sensors_value()
-        print(data_payload)
+        # print(data_payload)
         send_data()
-        break
+        time.sleep(SENSING_PERIOD)
