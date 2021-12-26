@@ -1,0 +1,152 @@
+[
+  {
+    "sensor_name": "gemho_001_soil_temperature",
+    "sensor_unit": "°C",
+    "sensor_factor": 0.01,
+    "sensor_byte": [
+      1,
+      3,
+      0,
+      6,
+      0,
+      1,
+      100,
+      11
+    ]
+  },
+  {
+    "sensor_name": "gemho_001_soil_humidity",
+    "sensor_unit": "%",
+    "sensor_factor": 0.01,
+    "sensor_byte": [
+      1,
+      3,
+      0,
+      7,
+      0,
+      1,
+      53,
+      203
+    ]
+  },
+  {
+    "sensor_name": "gemho_soil_electrical_conductivity",
+    "sensor_unit": "μS/cm",
+    "sensor_factor": 1,
+    "sensor_byte": [
+      1,
+      3,
+      0,
+      8,
+      0,
+      1,
+      5,
+      200
+    ]
+  },
+  {
+    "sensor_name": "gemho_002_temperature",
+    "sensor_unit": "°C",
+    "sensor_factor": 0.1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      0,
+      0,
+      1,
+      132,
+      57
+    ]
+  },
+  {
+    "sensor_name": "gemho_002_humidity",
+    "sensor_unit": "%",
+    "sensor_factor": 0.1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      1,
+      0,
+      1,
+      213,
+      249
+    ]
+  },
+  {
+    "sensor_name": "gemho_002_co2",
+    "sensor_unit": "ppm",
+    "sensor_factor": 1,
+    "sensor_byte": [
+      2,
+      3,
+      0,
+      4,
+      0,
+      1,
+      197,
+      248
+    ]
+  },
+  {
+    "sensor_name": "gemho_003_temperature",
+    "sensor_unit": "°C",
+    "sensor_factor": 0.1,
+    "sensor_byte": [
+      3,
+      3,
+      0,
+      0,
+      0,
+      1,
+      133,
+      232
+    ]
+  },
+  {
+    "sensor_name": "gemho_003_humidity",
+    "sensor_unit": "%",
+    "sensor_factor": 0.1,
+    "sensor_byte": [
+      3,
+      3,
+      0,
+      1,
+      0,
+      1,
+      212,
+      40
+    ]
+  },
+  {
+    "sensor_name": "gemho_004_pm25",
+    "sensor_unit": "μg/m³",
+    "sensor_factor": 1,
+    "sensor_byte": [
+      4,
+      3,
+      0,
+      12,
+      0,
+      1,
+      68,
+      92
+    ]
+  },
+  {
+    "sensor_name": "gemho_004_pm10",
+    "sensor_unit": "μg/m³",
+    "sensor_factor": 1,
+    "sensor_byte": [
+      4,
+      3,
+      0,
+      13,
+      0,
+      1,
+      21,
+      156
+    ]
+  }
+]
