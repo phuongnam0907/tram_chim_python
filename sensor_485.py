@@ -38,7 +38,7 @@ data_payload = {
     "latitude": 10.762622,
     "volt_battery": 12.2,
     "volt_solar": 5.3,
-    "data_sensor": {}
+    "data_ss": {}
 }
 
 
@@ -243,7 +243,7 @@ def send_data():
         sendAt('AT+SMCONF=\"URL\",' + MQTT_HOST + ',' + MQTT_PORT, 'OK', 0.25)
         sendAt('AT+SMCONF=\"KEEPTIME\",60', 'OK', 0.25)
         sendAt('AT+SMCONN', 'OK', 3)
-        sendAt('AT+SMPUB=\"' + MQTT_TOPIC + str(data_payload['station_id']) + '\",' + str(len(json.dumps(data_payload))) + ',1,0', 'OK', 2)
+        sendAt('AT+SMPUB=\"' + MQTT_TOPIC + str(data_payload['station_id']) + '\",' + str(len(json.dumps(data_payload))) + ',0,1', 'OK', 2)
         serial_nbiot.write(json.dumps(data_payload).encode())
         time.sleep(10)
         print('send message successfully!')
