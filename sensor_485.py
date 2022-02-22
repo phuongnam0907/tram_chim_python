@@ -277,4 +277,4 @@ if __name__ == '__main__':
         count += 1
         # print(data_payload)
         send_data()
-        time.sleep(SENSING_PERIOD)
+        time.sleep(270)
