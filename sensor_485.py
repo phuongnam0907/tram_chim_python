@@ -273,7 +273,7 @@ if __name__ == '__main__':
     time.sleep(150)
     while True:
         get_sensors_value()
-        data_payload['project_id'] = count
+        data_payload['volt_battery'] = count
         count += 1
         # print(data_payload)
         send_data()
