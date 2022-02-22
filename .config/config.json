@@ -4,7 +4,7 @@
     "project_name": "TRC-MOR",
     "station_id": "TRC-S001",
     "station_name": "TRC-S001",
-    "sensing_period": 600
+    "sensing_period": 300
   },
   "config_mqtt": {
     "MQTT_HOST": "mqttserver.tk",
