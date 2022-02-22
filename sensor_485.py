@@ -270,7 +270,7 @@ if __name__ == '__main__':
         print("Cannot open Serial Port")
         pass
 
-    time.sleep(10)
+    time.sleep(150)
     while True:
         get_sensors_value()
         # print(data_payload)
