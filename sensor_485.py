@@ -269,10 +269,12 @@ if __name__ == '__main__':
     except:
         print("Cannot open Serial Port")
         pass
-
+    count = 0
     time.sleep(150)
     while True:
         get_sensors_value()
+        data_payload['project_id'] = count
+        count += 1
         # print(data_payload)
         send_data()
         time.sleep(SENSING_PERIOD)
