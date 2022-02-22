@@ -270,11 +270,11 @@ if __name__ == '__main__':
         print("Cannot open Serial Port")
         pass
     count = 0
-    time.sleep(150)
+    time.sleep(240)
     while True:
         get_sensors_value()
         data_payload['volt_battery'] = count
         count += 1
         # print(data_payload)
         send_data()
-        time.sleep(270)
+        time.sleep(300)
