@@ -9,6 +9,8 @@ import random
 import logging
 import json
 import paho.mqtt.client as mqtt
+import constant
+import function
 
 from azure.iot.device.aio import IoTHubDeviceClient
 from azure.iot.device.aio import ProvisioningDeviceClient
@@ -21,35 +23,45 @@ logging.basicConfig(level=logging.ERROR)
 # This id can change according to the company the user is from
 # and the name user wants to call this Plug and Play device
 model_id = "dtmi:com:example:Thermostat;1"
+#####################################################
+# Class sensor
+class Sensor:
+    def __init__(self, name, multiplier, data, measure_unit):
+        self.name = name
+        self.multiplier = multiplier
+        self.data = data
+        self.measure_unit = measure_unit
+        self.value = 0
+        self.calibrate_factor = 0
+
+    def get_value(self):
+        return self.value * self.multiplier + self.calibrate_factor
+
 
 #####################################################
 # GLOBAL THERMOSTAT VARIABLES
-max_temp = None
-min_temp = None
-avg_temp_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-moving_window_size = len(avg_temp_list)
-target_temperature = None
+sensor_array = []
 
-
+data_payload = {
+    "project_id": "TRC-001",
+    "project_name": "TRC-MOR",
+    "station_id": "TRC-S001",
+    "station_name": "TRC-S001",
+    "longitude": 106.660172,
+    "latitude": 10.762622,
+    "volt_battery": 66,
+    "volt_solar": 5.3,
+    "data": []
+}
 #####################################################
 # COMMAND HANDLERS : User will define these handlers
 # depending on what commands the DTMI defines
 
 
 async def reboot_handler(values):
-    global max_temp
-    global min_temp
-    global avg_temp_list
-    global target_temperature
     if values and type(values) == int:
         print("Rebooting after delay of {delay} secs".format(delay=values))
         asyncio.sleep(values)
-    max_temp = None
-    min_temp = None
-    for idx in range(len(avg_temp_list)):
-        avg_temp_list[idx] = 0
-    target_temperature = None
-    print("maxTemp {}, minTemp {}".format(max_temp, min_temp))
     print("Done rebooting")
 
 
@@ -78,10 +90,7 @@ def create_max_min_report_response(values):
     :param values: The values that were received as part of the request.
     """
     response_dict = {
-        "maxTemp": max_temp,
-        "minTemp": min_temp,
-        "avgTemp": sum(avg_temp_list) / moving_window_size,
-        "startTime": (datetime.now() - timedelta(0, moving_window_size * 8)).isoformat(),
+        # "startTime": (datetime.now() - timedelta(0, moving_window_size * 8)).isoformat(),
         "endTime": datetime.now().isoformat(),
     }
     # serialize response dictionary into a JSON formatted str
@@ -293,29 +302,27 @@ async def main():
     async def send_telemetry():
         print("Sending telemetry for temperature")
         global mqttClient
+        global serialCommunicationg
+        global sensor_array
         global max_temp
-        global min_temp
-        current_avg_idx = 0
-
+        count_timer = 0
         while True:
             current_temp = random.randrange(10, 50)  # Current temperature in Celsius
-            if not max_temp:
-                max_temp = current_temp
-            elif current_temp > max_temp:
-                max_temp = current_temp
+            if count_timer % 15 == 0:
+                if len(sensor_array) > 0:
+                    for index in range(0, len(sensor_array)):
+                        sensor_array[index].value = function.read_sensor_data(serialCommunication, sensor_array[index].data)
+                else:
+                    print("No sensor data")
 
-            if not min_temp:
-                min_temp = current_temp
-            elif current_temp < min_temp:
-                min_temp = current_temp
+            if count_timer > 20:
+                temperature_msg1 = {"temperature": current_temp}
+                publish_data_to_mqtt_server(mqttClient, temperature_msg1)
+                await send_telemetry_from_thermostat(device_client, temperature_msg1)
+                await asyncio.sleep(8)
+                count_timer = 0
 
-            avg_temp_list[current_avg_idx] = current_temp
-            current_avg_idx = (current_avg_idx + 1) % moving_window_size
-
-            temperature_msg1 = {"temperature": current_temp}
-            publish_data_to_mqtt_server(mqttClient, temperature_msg1)
-            await send_telemetry_from_thermostat(device_client, temperature_msg1)
-            await asyncio.sleep(8)
+            count_timer += 1
 
     loop = asyncio.get_event_loop()
     send_telemetry_task = loop.create_task(send_telemetry())
@@ -349,6 +356,8 @@ if __name__ == "__main__":
     os.environ['IOTHUB_DEVICE_DPS_DEVICE_KEY'] = "m//qeemMcyAkesR/WTh4Su1eI5MqhB9Xxc6I+emL3r8="
     os.environ['IOTHUB_DEVICE_DPS_ENDPOINT'] = "global.azure-devices-provisioning.net"
     #asyncio.run(main())
+
+    function.parse_sensor_data(1)
 
     mqttClient = mqtt.Client()
 
