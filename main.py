@@ -119,9 +119,6 @@ async def send_telemetry_from_thermostat(device_client, telemetry_msg):
     await device_client.send_message(msg)
 
 
-def publish_data_to_mqtt_server(device_client, data):
-    device_client.publish("/tram_chim_monitoring/dong_thap/status", json.dumps(data), 0, True)
-
 # END TELEMETRY TASKS
 #####################################################
 
@@ -315,9 +312,9 @@ async def main():
                 else:
                     print("No sensor data")
 
-            if count_timer > 20:
+            if count_timer > constant.TIME_CYCLE:
                 temperature_msg1 = {"temperature": current_temp}
-                publish_data_to_mqtt_server(mqttClient, temperature_msg1)
+                function.publish_data_to_mqtt_server(mqttClient, temperature_msg1)
                 await send_telemetry_from_thermostat(device_client, temperature_msg1)
                 await asyncio.sleep(8)
                 count_timer = 0
@@ -352,8 +349,8 @@ if __name__ == "__main__":
     os.environ['IOTHUB_DEVICE_DPS_ID_SCOPE'] = "0ne00437DD3"
     # os.environ['IOTHUB_DEVICE_DPS_DEVICE_ID'] = "d_001"
     # os.environ['IOTHUB_DEVICE_DPS_DEVICE_KEY'] = "O2ZYnBfmpEWFEevnBRpxxfmEZQTA5LAiVt7XR5+s1kk="
-    os.environ['IOTHUB_DEVICE_DPS_DEVICE_ID'] = "a2-water-001"
-    os.environ['IOTHUB_DEVICE_DPS_DEVICE_KEY'] = "m//qeemMcyAkesR/WTh4Su1eI5MqhB9Xxc6I+emL3r8="
+    os.environ['IOTHUB_DEVICE_DPS_DEVICE_ID'] = "solar-air-001"
+    os.environ['IOTHUB_DEVICE_DPS_DEVICE_KEY'] = "YfcyJbv4CKF7aV09Y/Ngnv3t80HPl4XpANMvllO9MxU="
     os.environ['IOTHUB_DEVICE_DPS_ENDPOINT'] = "global.azure-devices-provisioning.net"
     #asyncio.run(main())
 
