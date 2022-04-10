@@ -3,7 +3,7 @@ import json
 
 def parse_sensor_data():
     temp_array = []
-    if True:
+    if False:
         return temp_array, constant.SATATION_TYPE_WATER
     else:
         return temp_array, constant.SATATION_TYPE_AIR_SOIL

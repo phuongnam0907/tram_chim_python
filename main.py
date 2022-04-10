@@ -47,15 +47,14 @@ sensor_array = []
 STATION_TYPE = 0
 
 data_payload = {
-    "project_id": "TRC-001",
-    "project_name": "TRC-MOR",
-    "station_id": "TRC-S001",
-    "station_name": "TRC-S001",
+    "project_id": const_var.PROJECT_ID,
+    "project_name": const_var.PROJECT_NAME,
+    "station_id": const_var.STATION_ID,
+    "station_name": const_var.STATION_NAME,
     "longitude": 106.660172,
     "latitude": 10.762622,
     "volt_battery": 66,
-    "volt_solar": 5.3,
-    "data": []
+    "volt_solar": 5.3
 }
 
 # Variables of water data
@@ -345,11 +344,11 @@ async def main():
         print("Sending telemetry for temperature")
         global mqttClient
         global serialCommunication
-        global sensor_array
+        global sensor_array, STATION_TYPE
         global max_temp
         count_timer = 0
         while True:
-            time.sleep(1)
+            # time.sleep(1)
             count_timer += 1
 
             if count_timer % const_var.TIME_CYCLE == 0:
@@ -359,9 +358,8 @@ async def main():
                 else:
                     print("No sensor data")
 
-                temperature_msg1 = {"temperature": current_temp}
-                function.publish_data_to_mqtt_server(mqttClient, temperature_msg1)
-                await send_telemetry_from_thermostat(device_client, temperature_msg1)
+                function.publish_data_to_mqtt_server(mqttClient, update_data_payload(STATION_TYPE))
+                await send_telemetry_from_thermostat(device_client, update_data_sensor(STATION_TYPE))
                 await asyncio.sleep(8)
             
             if count_timer > const_var.REQUEST_CYCLE:
@@ -387,6 +385,29 @@ async def main():
 
     # Finally, shut down the client
     await device_client.shutdown()
+
+
+def update_data_payload(station):
+    global data_payload
+    global data_water
+    global data_air
+
+    if station == const_var.SATATION_TYPE_WATER:
+        data_payload["data"] = data_water
+    elif station == const_var.SATATION_TYPE_AIR_SOIL:
+        data_payload["data"] = data_air
+
+    return data_payload
+
+
+def update_data_sensor(station):
+    global data_water
+    global data_air
+
+    if station == const_var.SATATION_TYPE_WATER:
+        return data_water
+    elif station == const_var.SATATION_TYPE_AIR_SOIL:
+        return data_air
 
 
 #####################################################
