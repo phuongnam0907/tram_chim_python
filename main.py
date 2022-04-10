@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -8,8 +10,10 @@ import asyncio
 import random
 import logging
 import json
+import time
+from serial import Serial
 import paho.mqtt.client as mqtt
-import constant
+import constant as const_var
 import function
 
 from azure.iot.device.aio import IoTHubDeviceClient
@@ -26,21 +30,21 @@ model_id = "dtmi:com:example:Thermostat;1"
 #####################################################
 # Class sensor
 class Sensor:
-    def __init__(self, name, multiplier, data, measure_unit):
+    def __init__(self, name, data, measure_unit):
         self.name = name
-        self.multiplier = multiplier
         self.data = data
         self.measure_unit = measure_unit
         self.value = 0
         self.calibrate_factor = 0
 
     def get_value(self):
-        return self.value * self.multiplier + self.calibrate_factor
+        return self.value * self.calibrate_factor
 
 
 #####################################################
 # GLOBAL THERMOSTAT VARIABLES
 sensor_array = []
+STATION_TYPE = 0
 
 data_payload = {
     "project_id": "TRC-001",
@@ -53,6 +57,47 @@ data_payload = {
     "volt_solar": 5.3,
     "data": []
 }
+
+# Variables of water data
+WATER_TEMPERATURE = 0.0
+WATER_TURBIDITY = 0.0
+WATER_PH = 0.0
+WATER_WATERLEVEL = 0.0
+WATER_TDS = 0.0
+WATER_EC = 0.0
+WATER_DO = 0.0
+
+data_water = {
+    "temperature": WATER_TEMPERATURE,
+    "turbidity": WATER_TURBIDITY,
+    "ph": WATER_PH,
+    "waterlevel": WATER_WATERLEVEL,
+    "tds": WATER_TDS,
+    "ec": WATER_EC,
+    "do": WATER_DO
+}
+
+# Variables of AIR/SOIL data
+AIR_TEMPERATURE = 0.0
+AIR_HUMIDITY = 0.0
+AIR_CARBONDIOXIDE = 0.0
+AIR_PM2_5 = 0.0
+AIR_PM10 = 0.0
+SOIL_TEMPERATURE = 0.0
+SOIL_HUMIDITY = 0.0
+SOIL_CONDUCTIVITY = 0.0
+
+data_air = {
+    "air_temperature": AIR_TEMPERATURE,
+    "air_humidity": AIR_HUMIDITY,
+    "air_carbondioxide": AIR_CARBONDIOXIDE,
+    "air_pm2_5": AIR_PM2_5,
+    "air_pm10": AIR_PM10,
+    "soil_temperature": SOIL_TEMPERATURE,
+    "soil_humidity": SOIL_HUMIDITY,
+    "soil_conductivity": SOIL_CONDUCTIVITY
+}
+
 #####################################################
 # COMMAND HANDLERS : User will define these handlers
 # depending on what commands the DTMI defines
@@ -299,27 +344,30 @@ async def main():
     async def send_telemetry():
         print("Sending telemetry for temperature")
         global mqttClient
-        global serialCommunicationg
+        global serialCommunication
         global sensor_array
         global max_temp
         count_timer = 0
         while True:
-            current_temp = random.randrange(10, 50)  # Current temperature in Celsius
-            if count_timer % 15 == 0:
+            time.sleep(1)
+            count_timer += 1
+
+            if count_timer % const_var.TIME_CYCLE == 0:
                 if len(sensor_array) > 0:
                     for index in range(0, len(sensor_array)):
                         sensor_array[index].value = function.read_sensor_data(serialCommunication, sensor_array[index].data)
                 else:
                     print("No sensor data")
 
-            if count_timer > constant.TIME_CYCLE:
                 temperature_msg1 = {"temperature": current_temp}
                 function.publish_data_to_mqtt_server(mqttClient, temperature_msg1)
                 await send_telemetry_from_thermostat(device_client, temperature_msg1)
                 await asyncio.sleep(8)
+            
+            if count_timer > const_var.REQUEST_CYCLE:
                 count_timer = 0
 
-            count_timer += 1
+            
 
     loop = asyncio.get_event_loop()
     send_telemetry_task = loop.create_task(send_telemetry())
@@ -345,26 +393,22 @@ async def main():
 # EXECUTE MAIN
 
 if __name__ == "__main__":
-    os.environ['IOTHUB_DEVICE_SECURITY_TYPE'] = "DPS"
-    os.environ['IOTHUB_DEVICE_DPS_ID_SCOPE'] = "0ne00437DD3"
-    # os.environ['IOTHUB_DEVICE_DPS_DEVICE_ID'] = "d_001"
-    # os.environ['IOTHUB_DEVICE_DPS_DEVICE_KEY'] = "O2ZYnBfmpEWFEevnBRpxxfmEZQTA5LAiVt7XR5+s1kk="
-    os.environ['IOTHUB_DEVICE_DPS_DEVICE_ID'] = "solar-air-001"
-    os.environ['IOTHUB_DEVICE_DPS_DEVICE_KEY'] = "YfcyJbv4CKF7aV09Y/Ngnv3t80HPl4XpANMvllO9MxU="
-    os.environ['IOTHUB_DEVICE_DPS_ENDPOINT'] = "global.azure-devices-provisioning.net"
-    #asyncio.run(main())
+    os.environ['IOTHUB_DEVICE_SECURITY_TYPE'] = const_var.IOTHUB_DEVICE_SECURITY_TYPE
+    os.environ['IOTHUB_DEVICE_DPS_ID_SCOPE'] = const_var.IOTHUB_DEVICE_DPS_ID_SCOPE
+    os.environ['IOTHUB_DEVICE_DPS_DEVICE_ID'] = const_var.IOTHUB_DEVICE_DPS_DEVICE_ID
+    os.environ['IOTHUB_DEVICE_DPS_DEVICE_KEY'] = const_var.IOTHUB_DEVICE_DPS_DEVICE_KEY
+    os.environ['IOTHUB_DEVICE_DPS_ENDPOINT'] = const_var.IOTHUB_DEVICE_DPS_ENDPOINT
 
-    function.parse_sensor_data(1)
+    sensor_array, STATION_TYPE = function.parse_sensor_data()
+    sensor_array = function.parse_request_url(sensor_array)
 
     mqttClient = mqtt.Client()
-
-    mqttClient.username_pw_set("tram_chim", "TramChimMQTT...")
-    mqttClient.connect("mqttserver.tk", 1883, 60)
+    mqttClient.username_pw_set(const_var.MQTT_USERNAME, const_var.MQTT_PASSWORD)
+    mqttClient.connect(const_var.MQTT_SERVER, int(const_var.MQTT_PORT), 60)
     mqttClient.loop_start()
 
-    #serialCommunication = Serial(port="/dev/ttyUSB0", baudrate=19200)
+    serialCommunication = Serial(const_var.SERIAL_PORT, const_var.SERIAL_BAUDRATE)
 
-    # If using Python 3.6 or below, use the following code instead of asyncio.run(main()):
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
     loop.close()

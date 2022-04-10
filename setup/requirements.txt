@@ -1,0 +1,4 @@
+azure-iot-device
+pyserial
+configparser
+paho-mqtt

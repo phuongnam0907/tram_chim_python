@@ -30,6 +30,6 @@ STATION_ID = "TRC-S001"
 STATION_NAME = "Trạm S001"
 
 ########## REPLACE BY SETUP.PY!!!!!!
-CPU_SERIAL = "100000001bc98da9"
-ROOT_PATH = "/home/pi/tram_chim_python"
+CPU_SERIAL = "cpu_serial_replace"
+ROOT_PATH = "root_path_replace"
 ########## END REPLACE ##########

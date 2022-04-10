@@ -1,0 +1,15 @@
+[Unit]
+Description=Python Service
+After=network-online.target network.target multi-user.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=~
+ExecStart=/usr/bin/python3 root_path_replace/main.py
+User=pi
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target network-online.target
