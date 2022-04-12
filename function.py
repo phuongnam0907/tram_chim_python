@@ -1,28 +1,68 @@
 import constant
 import json
+import time
 import requests
 
-def parse_sensor_data():
-    temp_array = []
-    if False:
-        return temp_array, constant.SATATION_TYPE_WATER
-    else:
-        return temp_array, constant.SATATION_TYPE_AIR_SOIL
 
-    
-def upđate_data_from_url():
-    r = requests.get(url=constant.URL)
+#####################################################
+# Class sensor
+class Sensor:
+    def __init__(self, name, key, data, measure_unit, calibrate_factor=None):
+        self.name = name
+        self.data = data
+        self.key = key
+        self.measure_unit = measure_unit
+        self.value = 0.0
+        if calibrate_factor is not None:
+            self.calibrate_factor = calibrate_factor
+        else:
+            self.calibrate_factor = 1
+
+    def get_value(self):
+        return self.value * self.calibrate_factor
+
+
+def download_url_data():
+    r = requests.get(url=constant.URL_CALIBRATION)
     return r.json()
-    
 
-def parse_request_url(data):
-    if (len(data) > 0):
-        pass
+
+def find_index_from_key_value(json_array, key, value):
+    if len(json_array) > 0:
+        index = 0
+        for item in json_array:
+            if item[key] == value:
+                return index
+            index += 1
+    return -1
+
+
+def parse_sensor_data():
+    data_json = download_url_data()
+    object_array = data_json[find_index_from_key_value(data_json, "CPUSerial", constant.CPU_SERIAL)]['SensorData']
+    temp_array = []
+    if len(object_array) > 0:
+        for item in object_array:
+            temp_array.append(Sensor(name=item['sensorName'],
+                                     key=item['sensorKey'],
+                                     data=item['sensorData'],
+                                     measure_unit=item['sensorUnit'],
+                                     calibrate_factor=item['sensorCalib']))
+
+    return json.loads(temp_array)
+
+
+def upđate_data_from_url(data):
+    data_json = download_url_data()
+    object_array = data_json[find_index_from_key_value(data_json, "CPUSerial", constant.CPU_SERIAL)]['SensorData']
+    if 0 < len(data) == len(object_array) and len(object_array) > 0:
+        for item in data:
+            item.calibrate_factor = object_array[find_index_from_key_value(object_array, "sensorKey", item.key)]['sensorCalib']
     return data
 
 
 def read_sensor_data(serial, data):
-    if serial.isOpen() == True:
+    if serial.isOpen():
         return write_serial_data(serial, data)
     else:
         print("ERROR: Cannot open serial port")
@@ -37,7 +77,7 @@ def write_serial_data(serial, data):
     try:
         serial.write(serial.to_bytes(data))
         time.sleep(1)
-        return read_serial(serial)
+        return read_serial_data(serial)
     except:
         print("ERROR: Failed to write data")
         return -1
@@ -45,7 +85,7 @@ def write_serial_data(serial, data):
 
 def read_serial_data(serial):
     bytesToRead = serial.inWaiting()
-    if (bytesToRead > 0):
+    if bytesToRead > 0:
         out = serial.read(bytesToRead)
         data_array = [b for b in out]
         if len(data_array) == 7:

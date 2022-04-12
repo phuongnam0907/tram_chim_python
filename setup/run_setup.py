@@ -1,7 +1,14 @@
 #!/usr/bin/python3
 
 import os
+import requests
+import json
 import subprocess
+
+def download_url_data():
+    URL = "https://ubc.sgp1.cdn.digitaloceanspaces.com/TramChimPark/Config/config.txt"
+    r = requests.get(url=URL)
+    return r.json()
 
 def getserial():
     # Extract serial from cpuinfo file
@@ -19,6 +26,19 @@ def getserial():
     return cpuserial
 
 current_path = os.environ["ROOT_PATH"]
+cpu_serial = getserial()
+data_json = download_url_data()
+station_type = ""
+device_id = ""
+device_key = ""
+
+if len(data_json) > 0:
+    for item in data_json:
+        if item['CPUSerial'] == cpu_serial:
+            station_type = item['station_type']
+            device_id = item['device_id']
+            device_key = item['device_key']
+
 
 #input file
 fin = open(current_path + "/template/constant.template", "r")
@@ -30,9 +50,15 @@ for line in fin:
     line_data = line
     
     if line.find("cpu_serial_replace") > -1:
-        line_data = line.replace('cpu_serial_replace', getserial())
+        line_data = line.replace('cpu_serial_replace', cpu_serial)
     if line.find("root_path_replace") > -1:
         line_data = line.replace('root_path_replace', current_path)
+    if line.find("station_type_replace") > -1:
+        line_data = line.replace('station_type_replace', station_type)
+    if line.find("device_id_replace") > -1:
+        line_data = line.replace('device_id_replace', device_id)
+    if line.find("device_key_replace") > -1:
+        line_data = line.replace('device_key_replace', device_key)
         
     fout.write(line_data)
     
@@ -40,6 +66,7 @@ for line in fin:
 fin.close()
 fout.close()
 
+###########################################################################
 # Create service auto run
 if os.path.exists("/etc/systemd/system/python_iot.service"):
     os.remove("/etc/systemd/system/python_iot.service")

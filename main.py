@@ -27,24 +27,10 @@ logging.basicConfig(level=logging.ERROR)
 # This id can change according to the company the user is from
 # and the name user wants to call this Plug and Play device
 model_id = "dtmi:com:example:Thermostat;1"
-#####################################################
-# Class sensor
-class Sensor:
-    def __init__(self, name, data, measure_unit):
-        self.name = name
-        self.data = data
-        self.measure_unit = measure_unit
-        self.value = 0
-        self.calibrate_factor = 0
-
-    def get_value(self):
-        return self.value * self.calibrate_factor
-
 
 #####################################################
 # GLOBAL THERMOSTAT VARIABLES
 sensor_array = []
-STATION_TYPE = 0
 
 data_payload = {
     "project_id": const_var.PROJECT_ID,
@@ -55,46 +41,6 @@ data_payload = {
     "latitude": 10.762622,
     "volt_battery": 66,
     "volt_solar": 5.3
-}
-
-# Variables of water data
-WATER_TEMPERATURE = 0.0
-WATER_TURBIDITY = 0.0
-WATER_PH = 0.0
-WATER_WATERLEVEL = 0.0
-WATER_TDS = 0.0
-WATER_EC = 0.0
-WATER_DO = 0.0
-
-data_water = {
-    "temperature": WATER_TEMPERATURE,
-    "turbidity": WATER_TURBIDITY,
-    "ph": WATER_PH,
-    "waterlevel": WATER_WATERLEVEL,
-    "tds": WATER_TDS,
-    "ec": WATER_EC,
-    "do": WATER_DO
-}
-
-# Variables of AIR/SOIL data
-AIR_TEMPERATURE = 0.0
-AIR_HUMIDITY = 0.0
-AIR_CARBONDIOXIDE = 0.0
-AIR_PM2_5 = 0.0
-AIR_PM10 = 0.0
-SOIL_TEMPERATURE = 0.0
-SOIL_HUMIDITY = 0.0
-SOIL_CONDUCTIVITY = 0.0
-
-data_air = {
-    "air_temperature": AIR_TEMPERATURE,
-    "air_humidity": AIR_HUMIDITY,
-    "air_carbondioxide": AIR_CARBONDIOXIDE,
-    "air_pm2_5": AIR_PM2_5,
-    "air_pm10": AIR_PM10,
-    "soil_temperature": SOIL_TEMPERATURE,
-    "soil_humidity": SOIL_HUMIDITY,
-    "soil_conductivity": SOIL_CONDUCTIVITY
 }
 
 #####################################################
@@ -344,8 +290,8 @@ async def main():
         print("Sending telemetry for temperature")
         global mqttClient
         global serialCommunication
-        global sensor_array, STATION_TYPE
-        global max_temp
+        global sensor_array
+
         count_timer = 0
         while True:
             # time.sleep(1)
@@ -358,11 +304,12 @@ async def main():
                 else:
                     print("No sensor data")
 
-                function.publish_data_to_mqtt_server(mqttClient, update_data_payload(STATION_TYPE))
-                await send_telemetry_from_thermostat(device_client, update_data_sensor(STATION_TYPE))
+                function.publish_data_to_mqtt_server(mqttClient, update_data_payload())
+                await send_telemetry_from_thermostat(device_client, update_data_sensor())
                 await asyncio.sleep(8)
             
             if count_timer > const_var.REQUEST_CYCLE:
+                sensor_array = function.upđate_data_from_url(sensor_array)
                 count_timer = 0
 
             
@@ -387,27 +334,22 @@ async def main():
     await device_client.shutdown()
 
 
-def update_data_payload(station):
-    global data_payload
-    global data_water
-    global data_air
+def update_data_sensor():
+    global sensor_array
+    data_json = {}
+    if len(sensor_array) > 0:
+        for item in sensor_array:
+            data_json[item.key] = item.get_value()
 
-    if station == const_var.SATATION_TYPE_WATER:
-        data_payload["data"] = data_water
-    elif station == const_var.SATATION_TYPE_AIR_SOIL:
-        data_payload["data"] = data_air
+    return json.loads(data_json)
+
+
+def update_data_payload():
+    global data_payload
+
+    data_payload["data"] = update_data_sensor()
 
     return data_payload
-
-
-def update_data_sensor(station):
-    global data_water
-    global data_air
-
-    if station == const_var.SATATION_TYPE_WATER:
-        return data_water
-    elif station == const_var.SATATION_TYPE_AIR_SOIL:
-        return data_air
 
 
 #####################################################
@@ -420,8 +362,8 @@ if __name__ == "__main__":
     os.environ['IOTHUB_DEVICE_DPS_DEVICE_KEY'] = const_var.IOTHUB_DEVICE_DPS_DEVICE_KEY
     os.environ['IOTHUB_DEVICE_DPS_ENDPOINT'] = const_var.IOTHUB_DEVICE_DPS_ENDPOINT
 
-    sensor_array, STATION_TYPE = function.parse_sensor_data()
-    sensor_array = function.parse_request_url(sensor_array)
+    sensor_array = function.parse_sensor_data()
+    sensor_array = function.upđate_data_from_url(sensor_array)
 
     mqttClient = mqtt.Client()
     mqttClient.username_pw_set(const_var.MQTT_USERNAME, const_var.MQTT_PASSWORD)
