@@ -1,5 +1,6 @@
 import constant
 import json
+import requests
 
 def parse_sensor_data():
     temp_array = []
@@ -8,6 +9,11 @@ def parse_sensor_data():
     else:
         return temp_array, constant.SATATION_TYPE_AIR_SOIL
 
+    
+def upđate_data_from_url():
+    r = requests.get(url=constant.URL)
+    return r.json()
+    
 
 def parse_request_url(data):
     if (len(data) > 0):
