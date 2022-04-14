@@ -2,11 +2,9 @@
 
 import os
 import requests
-import json
-import subprocess
 
 def download_url_data():
-    URL = "https://ubc.sgp1.cdn.digitaloceanspaces.com/TramChimPark/Config/config.txt"
+    URL = "https://ubc.sgp1.cdn.digitaloceanspaces.com/TramChimPark/Config/config.json"
     r = requests.get(url=URL)
     return r.json()
 
@@ -35,10 +33,12 @@ device_key = ""
 if len(data_json) > 0:
     for item in data_json:
         if item['CPUSerial'] == cpu_serial:
-            station_type = item['station_type']
-            device_id = item['device_id']
-            device_key = item['device_key']
+            station_type = item['StationType']
+            device_id = item['AzureID']
+            device_key = item['AzureToken']
 
+print("Type:", station_type)
+print("Device ID:", device_id)
 
 #input file
 fin = open(current_path + "/template/constant.template", "r")

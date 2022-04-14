@@ -35,8 +35,8 @@ sensor_array = []
 data_payload = {
     "project_id": const_var.PROJECT_ID,
     "project_name": const_var.PROJECT_NAME,
-    "station_id": const_var.STATION_ID,
-    "station_name": const_var.STATION_NAME,
+    "station_id": str(const_var.STATION_ID + const_var.IOTHUB_DEVICE_DPS_DEVICE_ID),
+    "station_name": str(const_var.STATION_NAME + const_var.IOTHUB_DEVICE_DPS_DEVICE_ID),
     "longitude": 106.660172,
     "latitude": 10.762622,
     "volt_battery": 66,

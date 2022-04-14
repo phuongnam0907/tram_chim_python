@@ -44,7 +44,7 @@ def parse_sensor_data():
     if len(object_array) > 0:
         for item in object_array:
             temp_array.append(Sensor(name=item['sensorName'],
-                                     key=item['sensorKey'],
+                                     key=item['sensorMapKey'],
                                      data=item['sensorData'],
                                      measure_unit=item['sensorUnit'],
                                      calibrate_factor=item['sensorCalib']))

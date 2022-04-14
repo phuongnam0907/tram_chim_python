@@ -14,12 +14,12 @@ IOTHUB_DEVICE_SECURITY_TYPE = "DPS"
 IOTHUB_DEVICE_DPS_ID_SCOPE = "0ne00437DD3"
 IOTHUB_DEVICE_DPS_ENDPOINT = "global.azure-devices-provisioning.net"
 
-URL_CALIBRATION = "https://ubc.sgp1.cdn.digitaloceanspaces.com/TramChimPark/Config/config.txt"
+URL_CALIBRATION = "https://ubc.sgp1.cdn.digitaloceanspaces.com/TramChimPark/Config/config.json"
 
 PROJECT_ID = "TRC-001"
 PROJECT_NAME = "TramChimMoritoring"
-STATION_ID = "TRC-S001"
-STATION_NAME = "Trạm S001"
+STATION_ID = "TRC-"
+STATION_NAME = "Trạm "
 
 ########## REPLACE BY SETUP.PY!!!!!!
 CPU_SERIAL = "cpu_serial_replace"

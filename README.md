@@ -17,37 +17,35 @@ Example command:
 cd /home/pi/tram_chim_python
 ```
 
-4. Run these command or copy line by line in terminal
+4. First of all, get CPU serial by running this script
 ```
-sudo /usr/bin/python3 setup.py
+sudo python3 get_cpu.py
 ```
 NOTE: enter the password if required
 
-5. Cpu Serial will print here
+Output example:
+```
+CPU Serial: 100000001bc98da9
+```
+Then copy the CPU serial to the JSON config file.
+
+<b>NOTE:</b> Type of CPU serial is <b>STRING</b>
+
+5. After the CPU serials are modifed, upload to server. Then run the next script to install
+```
+sudo /usr/bin/python3 setup.py
+```
+When install success, it will print the result like this
+
 Example:
 ```
 Root PATH: /home/pi/tram_chim_python
 CPU Serial: 100000001bc98da9
+Type: AIR_SOIL
+Dervice ID: solar-air-001
 ```
 
-6. Edit DEVICE_ID and DEVICE_ID of Azure server
-```
-nano constant.py
-```
-After changing, save it
-- Press "Ctrl + X"
-- Press "Y"
-- Press "Enter"
-
-7. Modify these lines
-```
-########## MODIFY THIS BY "USER" !!!!!!
-IOTHUB_DEVICE_DPS_DEVICE_ID = ""
-IOTHUB_DEVICE_DPS_DEVICE_KEY = ""
-########## END MODIFY ##########
-```
-
-8. After finshing configurable, run these commands
+6. After finshing configurable, run these commands
 ```
 sudo systemctl enable python_iot.service
 sudo systemctl start python_iot.service
