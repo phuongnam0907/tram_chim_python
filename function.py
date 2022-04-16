@@ -49,10 +49,10 @@ def parse_sensor_data():
                                      measure_unit=item['sensorUnit'],
                                      calibrate_factor=item['sensorCalib']))
 
-    return json.loads(temp_array)
+    return temp_array
 
 
-def upđate_data_from_url(data):
+def update_data_from_url(data):
     data_json = download_url_data()
     object_array = data_json[find_index_from_key_value(data_json, "CPUSerial", constant.CPU_SERIAL)]['SensorData']
     if 0 < len(data) == len(object_array) and len(object_array) > 0:

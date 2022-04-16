@@ -346,8 +346,17 @@ def update_data_sensor():
 
 def update_data_payload():
     global data_payload
+    global sensor_array
+    data_json_array = []
+    if len(sensor_array) > 0:
+        for item in sensor_array:
+            json_object = {}
+            json_object['sensor_name'] = item.name
+            json_object['sensor_unit'] = item.measure_unit
+            json_object['sensor_value'] = item.get_value()
+            data_json_array.append(json_object)
 
-    data_payload["data"] = update_data_sensor()
+    data_payload["data_sensor"] = data_json_array
 
     return data_payload
 
