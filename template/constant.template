@@ -8,7 +8,7 @@ MQTT_SERVER = "mqttserver.tk"
 MQTT_PORT = 1883
 MQTT_USERNAME = "tram_chim"
 MQTT_PASSWORD = "TramChimMQTT..."
-MQTT_TOPIC = "/tram_chim_monitoring/dong_thap/status"
+MQTT_TOPIC = "/tram_chim_monitoring/dong_thap/"
 
 IOTHUB_DEVICE_SECURITY_TYPE = "DPS"
 IOTHUB_DEVICE_DPS_ID_SCOPE = "0ne00437DD3"
