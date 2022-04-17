@@ -20,7 +20,7 @@ class Sensor:
             self.calibrate_factor = 1
 
     def get_value(self):
-        return self.value * self.calibrate_factor
+        return round(self.value * self.calibrate_factor, 2)
 
 
 def download_url_data():
@@ -71,6 +71,7 @@ def read_sensor_data(ser, data):
 
 
 def publish_data_to_mqtt_server(device_client, data):
+    print("Publish data to MQTT Server")
     device_client.publish(constant.MQTT_TOPIC, json.dumps(data), 0, True)
 
 
