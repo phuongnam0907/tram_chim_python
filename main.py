@@ -305,6 +305,7 @@ async def main():
                     print("No sensor data")
 
                 function.publish_data_to_mqtt_server(mqttClient, update_data_payload())
+                time.sleep(5)
                 await send_telemetry_from_thermostat(device_client, update_data_sensor())
                 await asyncio.sleep(8)
             
