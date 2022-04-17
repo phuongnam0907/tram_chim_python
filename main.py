@@ -39,7 +39,7 @@ data_payload = {
     "station_name": str(const_var.STATION_NAME + const_var.IOTHUB_DEVICE_DPS_DEVICE_ID),
     "longitude": 106.660172,
     "latitude": 10.762622,
-    "volt_battery": 66,
+    "volt_battery": 12.5,
     "volt_solar": 5.3
 }
 
