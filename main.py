@@ -352,6 +352,7 @@ def update_data_payload():
         for item in sensor_array:
             json_object = {}
             json_object['sensor_name'] = item.name
+            json_object['sensor_key'] = item.key
             json_object['sensor_unit'] = item.measure_unit
             json_object['sensor_value'] = item.get_value()
             data_json_array.append(json_object)
