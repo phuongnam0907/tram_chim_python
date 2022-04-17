@@ -67,7 +67,7 @@ def read_sensor_data(ser, data):
         return write_serial_data(ser, data)
     else:
         print("ERROR: Cannot open serial port")
-        return -1
+        return 0
 
 
 def publish_data_to_mqtt_server(device_client, data):
@@ -81,7 +81,7 @@ def write_serial_data(ser, data):
         return read_serial_data(ser)
     except:
         print("ERROR: Failed to write data")
-        return -1
+        return 0
 
 
 def read_serial_data(ser):
