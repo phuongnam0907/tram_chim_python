@@ -72,7 +72,7 @@ def read_sensor_data(ser, data):
 
 def publish_data_to_mqtt_server(device_client, data):
     print("Publish data to MQTT Server")
-    device_client.publish(str(constant.MQTT_TOPIC + constant.IOTHUB_DEVICE_DPS_DEVICE_ID + "/status"), json.dumps(data), 0, True)
+    device_client.publish(str(constant.MQTT_TOPIC + constant.IOTHUB_DEVICE_DPS_DEVICE_ID), json.dumps(data), 0, True)
 
 
 def write_serial_data(ser, data):
