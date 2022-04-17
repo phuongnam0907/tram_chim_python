@@ -309,7 +309,7 @@ async def main():
                 await asyncio.sleep(8)
             
             if count_timer > const_var.REQUEST_CYCLE:
-                sensor_array = function.upđate_data_from_url(sensor_array)
+                sensor_array = function.update_data_from_url(sensor_array)
                 count_timer = 0
 
             
@@ -372,7 +372,7 @@ if __name__ == "__main__":
     os.environ['IOTHUB_DEVICE_DPS_ENDPOINT'] = const_var.IOTHUB_DEVICE_DPS_ENDPOINT
 
     sensor_array = function.parse_sensor_data()
-    sensor_array = function.upđate_data_from_url(sensor_array)
+    sensor_array = function.update_data_from_url(sensor_array)
 
     mqttClient = mqtt.Client()
     mqttClient.username_pw_set(const_var.MQTT_USERNAME, const_var.MQTT_PASSWORD)
