@@ -294,7 +294,7 @@ async def main():
 
         count_timer = 0
         while True:
-            # time.sleep(1)
+            time.sleep(1)
             count_timer += 1
 
             if count_timer % const_var.TIME_CYCLE == 0:
