@@ -57,7 +57,7 @@ def update_data_from_url(data):
     object_array = data_json[find_index_from_key_value(data_json, "CPUSerial", constant.CPU_SERIAL)]['SensorData']
     if 0 < len(data) == len(object_array) and len(object_array) > 0:
         for item in data:
-            item.calibrate_factor = object_array[find_index_from_key_value(object_array, "sensorKey", item.key)]['sensorCalib']
+            item.calibrate_factor = object_array[find_index_from_key_value(object_array, "sensorMapKey", item.key)]['sensorCalib']
     return data
 
 
