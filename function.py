@@ -93,5 +93,5 @@ def read_serial_data(ser):
             value = data_array[3] * 256 + data_array[4]
             return value
         else:
-            return -1
-    return -1
+            return 0
+    return 0
