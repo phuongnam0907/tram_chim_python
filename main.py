@@ -21,7 +21,6 @@ from azure.iot.device.aio import IoTHubDeviceClient
 from azure.iot.device.aio import ProvisioningDeviceClient
 from azure.iot.device import constant, Message, MethodResponse
 from datetime import date, timedelta, datetime
-import RPi.GPIO as GPIO
 
 logging.basicConfig(level=logging.ERROR)
 

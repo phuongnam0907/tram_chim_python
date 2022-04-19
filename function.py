@@ -3,8 +3,6 @@ import json
 import time
 import requests
 import serial
-import os
-import glob
 
 #####################################################
 # Class sensor
