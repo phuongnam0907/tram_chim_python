@@ -1,5 +1,8 @@
 # Tram Chim Monitoring
 
+## Setup WATER station
+Follow this [link](https://pinout.xyz/pinout/1_wire) to open One-Wire driver
+
 ## How to setup
 1. SSH to Pi device
 - Example IP device: 192.168.0.100
