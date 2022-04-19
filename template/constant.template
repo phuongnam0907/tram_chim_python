@@ -18,8 +18,12 @@ URL_CALIBRATION = "https://ubc.sgp1.cdn.digitaloceanspaces.com/TramChimPark/Conf
 
 PROJECT_ID = "TRC-001"
 PROJECT_NAME = "TramChimMoritoring"
-STATION_ID = "TRC-"
+STATION_ID = "trc-"
 STATION_NAME = "Trạm "
+
+WATER_TEMPERATURE_KEY = "temperature"
+WATER_TEMPERATURE_NAME = "Nhiệt Độ"
+WATER_TEMPERATURE_UNIT = "°C"
 
 ########## REPLACE BY SETUP.PY!!!!!!
 CPU_SERIAL = "cpu_serial_replace"

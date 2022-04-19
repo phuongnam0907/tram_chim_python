@@ -11,6 +11,7 @@ import random
 import logging
 import json
 import time
+import glob
 from serial import Serial
 import paho.mqtt.client as mqtt
 import constant as const_var
@@ -20,6 +21,7 @@ from azure.iot.device.aio import IoTHubDeviceClient
 from azure.iot.device.aio import ProvisioningDeviceClient
 from azure.iot.device import constant, Message, MethodResponse
 from datetime import date, timedelta, datetime
+import RPi.GPIO as GPIO
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -31,6 +33,7 @@ model_id = "dtmi:com:example:Thermostat;1"
 #####################################################
 # GLOBAL THERMOSTAT VARIABLES
 sensor_array = []
+water_temperature_value = 0.0
 
 data_payload = {
     "project_id": const_var.PROJECT_ID,
@@ -42,6 +45,10 @@ data_payload = {
     "volt_battery": 12.5,
     "volt_solar": 5.3
 }
+
+BASE_DIR = '/sys/bus/w1/devices/'
+DEVICE_DIR = glob.glob(BASE_DIR + '28*')[0]
+DEVICE_FILE = DEVICE_DIR + '/w1_slave'
 
 #####################################################
 # COMMAND HANDLERS : User will define these handlers
@@ -291,6 +298,8 @@ async def main():
         global mqttClient
         global serialCommunication
         global sensor_array
+        global water_temperature_value
+        global DEVICE_FILE
 
         count_timer = 0
         while True:
@@ -298,22 +307,35 @@ async def main():
             count_timer += 1
 
             if count_timer % const_var.TIME_CYCLE == 0:
+                if const_var.STATION_TYPE == "WATER":
+                    function.Pump_Water(serialCommunication)
+                    time.sleep(3)
+
                 if len(sensor_array) > 0:
                     for index in range(0, len(sensor_array)):
-                        sensor_array[index].value = function.read_sensor_data(serialCommunication, sensor_array[index].data)
+                        if const_var.STATION_TYPE == "AIR_SOIL":
+                            sensor_array[index].value = function.read_sensor_data(serialCommunication,
+                                                                                  sensor_array[index].data)
+                        elif const_var.STATION_TYPE == "WATER":
+                            sensor_array[index].value = function.read_data_sensor(serialCommunication,
+                                                                                  sensor_array[index].data)
                 else:
                     print("No sensor data")
+
+                if const_var.STATION_TYPE == "WATER":
+                    water_temperature_value = function.read_temp_raw(DEVICE_FILE)
+                    time.sleep(1)
+                    function.Flush_Water(serialCommunication)
+                    time.sleep(3)
 
                 function.publish_data_to_mqtt_server(mqttClient, update_data_payload())
                 time.sleep(5)
                 await send_telemetry_from_thermostat(device_client, update_data_sensor())
                 await asyncio.sleep(8)
-            
+
             if count_timer > const_var.REQUEST_CYCLE:
                 sensor_array = function.update_data_from_url(sensor_array)
                 count_timer = 0
-
-            
 
     loop = asyncio.get_event_loop()
     send_telemetry_task = loop.create_task(send_telemetry())
@@ -337,10 +359,13 @@ async def main():
 
 def update_data_sensor():
     global sensor_array
+    global water_temperature_value
     data_json = {}
     if len(sensor_array) > 0:
         for item in sensor_array:
             data_json[item.key] = item.get_value()
+    if const_var.STATION_TYPE == "WATER":
+        data_json[const_var.WATER_TEMPERATURE_KEY] = water_temperature_value
 
     return json.loads(data_json)
 
@@ -348,15 +373,22 @@ def update_data_sensor():
 def update_data_payload():
     global data_payload
     global sensor_array
+    global water_temperature_value
     data_json_array = []
     if len(sensor_array) > 0:
         for item in sensor_array:
-            json_object = {}
-            json_object['sensor_name'] = item.name
-            json_object['sensor_key'] = item.key
-            json_object['sensor_unit'] = item.measure_unit
-            json_object['sensor_value'] = item.get_value()
+            json_object = {'sensor_name': item.name,
+                           'sensor_key': item.key,
+                           'sensor_unit': item.measure_unit,
+                           'sensor_value': item.get_value()}
             data_json_array.append(json_object)
+
+    if const_var.STATION_TYPE == "WATER":
+        json_object = {'sensor_name': const_var.WATER_TEMPERATURE_NAME,
+                       'sensor_key': const_var.WATER_TEMPERATURE_KEY,
+                       'sensor_unit': const_var.WATER_TEMPERATURE_UNIT,
+                       'sensor_value': water_temperature_value}
+        data_json_array.append(json_object)
 
     data_payload["data_sensor"] = data_json_array
 
@@ -372,6 +404,9 @@ if __name__ == "__main__":
     os.environ['IOTHUB_DEVICE_DPS_DEVICE_ID'] = const_var.IOTHUB_DEVICE_DPS_DEVICE_ID
     os.environ['IOTHUB_DEVICE_DPS_DEVICE_KEY'] = const_var.IOTHUB_DEVICE_DPS_DEVICE_KEY
     os.environ['IOTHUB_DEVICE_DPS_ENDPOINT'] = const_var.IOTHUB_DEVICE_DPS_ENDPOINT
+
+    os.system('modprobe w1-gpio')
+    os.system('modprobe w1-therm')
 
     sensor_array = function.parse_sensor_data()
     sensor_array = function.update_data_from_url(sensor_array)
