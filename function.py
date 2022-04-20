@@ -89,8 +89,9 @@ def read_serial_data(ser):
     if bytesToRead > 0:
         out = ser.read(bytesToRead)
         data_array = [b for b in out]
-        if len(data_array) == 7:
-            value = data_array[3] * 256 + data_array[4]
+        if len(data_array) >= 7:
+            array_size = len(data_array)
+            value = data_array[array_size - 4] * 256 + data_array[array_size - 3]
             return value
         else:
             return 0
@@ -187,22 +188,21 @@ def readPumpLevel(ser):
     ser.write(addCRC16(adc2))
     result = serial_read_data(ser, 100)
 
-    if checkCRC16(result) == True:
-        value = result[3] * 256 + result[4]
-        return value
-    else:
-        return 0
+    return result
 
 
 def Flush_Water(ser):
     counter_timer = 90
+    setFlush(ser, True)
+    time.sleep(0.5)
+    setFlush(ser, True)
     while True:
         counter_timer = counter_timer - 1
         if counter_timer % 10 == 0:
             print(counter_timer)
         if counter_timer == 0:
             break
-        setFlush(ser, True)
+        
         time.sleep(1)
 
     setFlush(ser, False)
@@ -212,6 +212,7 @@ def Flush_Water(ser):
 
 def Pump_Water(ser):
     counter_timer = 105
+    
     setPump(ser, True)
     time.sleep(0.5)
     setPump(ser, True)
@@ -236,11 +237,20 @@ def read_temp_raw(file_path):
     return lines
 
 
+def river_water_level(ser):
+    data = [0x01, 0x03, 0x00, 0x02, 0x00, 0x02, 0x65, 0xCB]
+    serial.write(data)
+    result = serial_read_data(serial, 100)
+    
+    return result
+
 def read_temp(file_path):
     lines = read_temp_raw(file_path)
+    
     while lines[0].strip()[-3:] != 'YES':
         time.sleep(0.2)
         lines = read_temp_raw(file_path)
+
     equals_pos = lines[1].find('t=')
     if equals_pos != -1:
         temp_string = lines[1][equals_pos + 2:]
