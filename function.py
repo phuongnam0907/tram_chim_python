@@ -287,3 +287,9 @@ def modify_ph(value, temperature):
     phValue = slope*(voltage-1500.0)/3.0+intercept
     print("PH: ", phValue)
     return phValue
+
+def modify_oxy(value, temprature):
+    return 0
+ 
+def modify_ec(value, temprature):
+    return 0
