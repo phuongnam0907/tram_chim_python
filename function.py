@@ -150,12 +150,12 @@ def serial_read_data(ser, length):
     return data_out
 
 
-def read_data_sensor(ser, data):
+def read_data_sensor(ser, data, key, temperature):
     if ser.isOpen():
         ser.write(serial.to_bytes(data))
         time.sleep(0.5)
         result = serial_read_data(serial, 100)
-        return result[len(result) - 3] * 256 + result[len(result) - 4]
+        return modify_sensor(key, result[len(result) - 3] * 256 + result[len(result) - 4], temperature)
     else:
         return 0
 
@@ -257,6 +257,22 @@ def read_temp(file_path):
         temp_c = float(temp_string) / 1000.0
         return round(temp_c, 2)
 
+
+def modify_sensor(key, value, temperature):
+    if key == "turbidity":
+        return modify_turbidity(value, temperature)
+    elif key == "tds":
+        return modify_tds(value, temperature)
+    elif key == "ph":
+        return modify_ph(value, temperature)
+    elif key == "do":
+        return modify_do(value, temperature)
+    elif key == "ec":
+        return modify_ec(value, temperature)
+    else:
+        return value
+
+
 def modify_tds(value, temperature):
     averageVoltage = value * 5.0 / 4096.0
     
@@ -282,14 +298,14 @@ def modify_ph(value, temperature):
     acidVoltage = 2032.44
     
     slope = (7.0-4.0)/((neutralVoltage-1500.0)/3.0 - (acidVoltage-1500.0)/3.0)
-    intercept =  7.0 - slope*(neutralVoltage-1500.0)/3.0
+    intercept = 7.0 - slope*(neutralVoltage-1500.0)/3.0
     
     phValue = slope*(voltage-1500.0)/3.0+intercept
     print("PH: ", phValue)
     return phValue
 
-def modify_oxy(value, temprature):
-    return 0
+def modify_do(value, temprature):
+    return value
  
 def modify_ec(value, temprature):
-    return 0
+    return value

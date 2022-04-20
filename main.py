@@ -309,6 +309,7 @@ async def main():
                 if const_var.STATION_TYPE == "WATER":
                     function.Pump_Water(serialCommunication)
                     time.sleep(3)
+                    water_temperature_value = function.read_temp(DEVICE_FILE)
 
                 if len(sensor_array) > 0:
                     for index in range(0, len(sensor_array)):
@@ -316,14 +317,14 @@ async def main():
                             sensor_array[index].value = function.read_sensor_data(serialCommunication,
                                                                                   sensor_array[index].data)
                         elif const_var.STATION_TYPE == "WATER":
-                            sensor_array[index].value = function.read_data_sensor(serialCommunication,
-                                                                                  sensor_array[index].data)
+                            sensor_array[index].value = function.read_data_sensor(ser=serialCommunication,
+                                                                                  data=sensor_array[index].data,
+                                                                                  key=sensor_array[index].key,
+                                                                                  temperature=water_temperature_value)
                 else:
                     print("No sensor data")
 
                 if const_var.STATION_TYPE == "WATER":
-                    water_temperature_value = function.read_temp_raw(DEVICE_FILE)
-                    time.sleep(1)
                     function.Flush_Water(serialCommunication)
                     time.sleep(3)
 
