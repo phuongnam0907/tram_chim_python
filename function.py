@@ -256,3 +256,34 @@ def read_temp(file_path):
         temp_string = lines[1][equals_pos + 2:]
         temp_c = float(temp_string) / 1000.0
         return round(temp_c, 2)
+
+def modify_tds(value, temperature):
+    averageVoltage = value * 5.0 / 4096.0
+    
+    compensationCoefficient=1.0+0.02*(temperature-25.0)
+    compensationVolatge=averageVoltage/compensationCoefficient
+    
+    tdsValue=(133.42*compensationVolatge*compensationVolatge*compensationVolatge - 255.86*compensationVolatge*compensationVolatge + 857.39*compensationVolatge)*0.5
+    
+    return tdsValue
+
+def modify_turbidity(value, temperature):
+    x = value * 5.0 / 4096.0
+    print("Turbidity (V)", x)
+    y = 3000 - (x * 781.25)
+    print("Turbidity (NTU)", y)
+    return y
+
+def modify_ph(value, temperature):
+    voltage = value * 5 / 4096.0
+    voltage = voltage * 1000
+    print("PH(mV)", voltage)
+    neutralVoltage = 1500
+    acidVoltage = 2032.44
+    
+    slope = (7.0-4.0)/((neutralVoltage-1500.0)/3.0 - (acidVoltage-1500.0)/3.0)
+    intercept =  7.0 - slope*(neutralVoltage-1500.0)/3.0
+    
+    phValue = slope*(voltage-1500.0)/3.0+intercept
+    print("PH: ", phValue)
+    return phValue
