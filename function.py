@@ -304,8 +304,28 @@ def modify_ph(value, temperature):
     print("PH: ", phValue)
     return phValue
 
-def modify_do(value, temprature):
-    return value
+def modify_do(value, temperature):
+    CAL1_T = 25
+    CAL1_V = 1600
+    DO_Table= [
+    14460, 14220, 13820, 13440, 13090, 12740, 12420, 12110, 11810, 11530,
+    11260, 11010, 10770, 10530, 10300, 10080, 9860, 9660, 9460, 9270,
+    9080, 8900, 8730, 8570, 8410, 8250, 8110, 7960, 7820, 7690,
+    7560, 7430, 7300, 7180, 7070, 6950, 6840, 6730, 6630, 6530, 6410]
+    Temperaturet = int(temperature)
+    voltage = value * 5000 / 4096.0 #mV
+    
+    V_saturation = CAL1_V + 35 * (Temperaturet - CAL1_T)
+    
+    value = voltage * DO_Table[Temperaturet] / V_saturation
+    
+    return value/1000
  
-def modify_ec(value, temprature):
+def modify_ec(value, temperature):
+    RES2 = 820.0
+    ECREF = 200.0
+    voltage = value * 5 / 4096.0
+    rawEC = 1000*voltage/RES2/ECREF
+    value = _rawEC / (1.0+0.0185*(temperature-25.0));  //temperature compensation
+    
     return value
