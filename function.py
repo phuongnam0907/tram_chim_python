@@ -297,11 +297,13 @@ def modify_turbidity(value, temperature):
     return y
 
 def modify_ph(value, temperature):
+    neutralVoltage = 900 #1500
+    acidVoltage = 1350 #2032.44
+    
     voltage = value * 5 / 4096.0
     voltage = voltage * 1000
     print("PH(mV)", voltage)
-    neutralVoltage = 900 #1500
-    acidVoltage = 1350 #2032.44
+    
     
     slope = (7.0-4.0)/((neutralVoltage-1500.0)/3.0 - (acidVoltage-1500.0)/3.0)
     intercept = 7.0 - slope*(neutralVoltage-1500.0)/3.0

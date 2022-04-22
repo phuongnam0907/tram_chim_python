@@ -307,8 +307,10 @@ async def main():
             
             if count_timer % const_var.TIME_CYCLE == 0:
                 if const_var.STATION_TYPE == "WATER":
-                    function.Pump_Water(serialCommunication)
-                    time.sleep(3)
+                    function.Pump_Water(serialCommunication, 105)
+                    time.sleep(30)
+                    function.Pump_Water(serialCommunication, 35)
+                    time.sleep(5)
                     water_temperature_value = function.read_temp(DEVICE_FILE)
                     
                 if len(sensor_array) > 0:
