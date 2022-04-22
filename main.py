@@ -304,13 +304,13 @@ async def main():
         while True:
             time.sleep(1)
             count_timer += 1
-
+            
             if count_timer % const_var.TIME_CYCLE == 0:
                 if const_var.STATION_TYPE == "WATER":
                     function.Pump_Water(serialCommunication)
                     time.sleep(3)
                     water_temperature_value = function.read_temp(DEVICE_FILE)
-
+                    
                 if len(sensor_array) > 0:
                     for index in range(0, len(sensor_array)):
                         if const_var.STATION_TYPE == "AIR_SOIL":
