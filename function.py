@@ -286,7 +286,10 @@ def modify_tds(value, temperature):
 def modify_turbidity(value, temperature):
     x = value * 5.0 / 4096.0
     print("Turbidity (V)", x)
-    y = 3000 - (x * 781.25)
+    #y = 3000 - (x * 781.25)
+    y = -1120.4 * x * x + 5742.3*x - 4352.9
+    if y < 0:
+        y = 3000
     print("Turbidity (NTU)", y)
     return y
 
@@ -294,8 +297,8 @@ def modify_ph(value, temperature):
     voltage = value * 5 / 4096.0
     voltage = voltage * 1000
     print("PH(mV)", voltage)
-    neutralVoltage = 1500
-    acidVoltage = 2032.44
+    neutralVoltage = 900 #1500
+    acidVoltage = 1350 #2032.44
     
     slope = (7.0-4.0)/((neutralVoltage-1500.0)/3.0 - (acidVoltage-1500.0)/3.0)
     intercept = 7.0 - slope*(neutralVoltage-1500.0)/3.0
@@ -322,10 +325,11 @@ def modify_do(value, temperature):
     return value/1000
  
 def modify_ec(value, temperature):
-    RES2 = 820.0
-    ECREF = 200.0
+    #RES2 = 820.0
+    #ECREF = 200.0
+    GAIN = 8.5
     voltage = value * 5 / 4096.0
-    rawEC = 1000*voltage/RES2/ECREF
-    value = _rawEC / (1.0+0.0185*(temperature-25.0));  //temperature compensation
+    rawEC = 1000*voltage * GAIN
+    value = rawEC / (1.0+0.0185*(temperature-25.0));  //temperature compensation
     
     return value
