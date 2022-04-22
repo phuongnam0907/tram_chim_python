@@ -94,8 +94,8 @@ def read_serial_data(ser):
             value = data_array[array_size - 4] * 256 + data_array[array_size - 3]
             return value
         else:
-            return 0
-    return 0
+            return -1
+    return -2
 
 ###################################################################
 def calCRC16(data):
@@ -317,7 +317,7 @@ def modify_do(value, temperature):
     7560, 7430, 7300, 7180, 7070, 6950, 6840, 6730, 6630, 6530, 6410]
     Temperaturet = int(temperature)
     voltage = value * 5000 / 4096.0 #mV
-    
+    print("DO Voltage", voltage)
     V_saturation = CAL1_V + 35 * (Temperaturet - CAL1_T)
     
     value = voltage * DO_Table[Temperaturet] / V_saturation
