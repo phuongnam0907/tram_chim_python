@@ -3,6 +3,7 @@ import json
 import time
 import requests
 import serial
+import sys
 
 #####################################################
 # Class sensor
@@ -33,6 +34,8 @@ def find_index_from_key_value(json_array, key, value):
 
 def parse_sensor_data():
     data_json = download_url_data()
+    print("Json data", json.dumps(data_json))
+    sys.stdout.flush()
     object_array = data_json[find_index_from_key_value(data_json, "CPUSerial", constant.CPU_SERIAL)]['SensorData']
     temp_array = []
     if len(object_array) > 0:
@@ -48,11 +51,13 @@ def read_sensor_data(ser, data):
         return write_serial_data(ser, data)
     else:
         print("ERROR: Cannot open serial port")
+        sys.stdout.flush()
         return 0
 
 
 def publish_data_to_mqtt_server(device_client, data):
     print("Publish data to MQTT Server")
+    sys.stdout.flush()
     device_client.publish(str(constant.MQTT_TOPIC + constant.CPU_SERIAL), json.dumps(data), 0, True)
 
 
@@ -63,6 +68,7 @@ def write_serial_data(ser, data):
         return read_serial_data(ser)
     except:
         print("ERROR: Failed to write data")
+        sys.stdout.flush()
         return 0
 
 
