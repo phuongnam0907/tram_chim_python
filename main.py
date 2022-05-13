@@ -75,4 +75,4 @@ if __name__ == "__main__":
 
   serialCommunication = Serial(const_var.SERIAL_PORT, const_var.SERIAL_BAUDRATE)
 
-  send_telemetry()
+  send_telemetry(mqttClient, serialCommunication)
