@@ -28,17 +28,18 @@ data_payload = {
 def send_telemetry(mqtt_client, serial_communication):
   print("Start sending telemetry")
   global sensor_array
-  count_timer = 0
+  count_timer = const_var.TIME_CYCLE - 30
 
   while True:
     time.sleep(1)
     count_timer += 1
-    
+
     if count_timer % const_var.TIME_CYCLE == 0:
       if len(sensor_array) > 0:
-          for index in range(0, len(sensor_array)):
-              if const_var.STATION_TYPE == "AIR_SOIL":
-                  sensor_array[index].value = function.read_sensor_data(serial_communication, sensor_array[index].data)
+        print("Read sensor...")
+        for index in range(0, len(sensor_array)):
+          if const_var.STATION_TYPE == "AIR_SOIL":
+            sensor_array[index].value = function.read_sensor_data(serial_communication, sensor_array[index].data)
       else:
         print("No sensor data")
 
@@ -46,7 +47,7 @@ def send_telemetry(mqtt_client, serial_communication):
       time.sleep(1)
 
       count_timer = 0
-      
+
 
 def update_data_payload():
   global data_payload
