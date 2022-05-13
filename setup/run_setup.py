@@ -27,18 +27,11 @@ current_path = os.environ["ROOT_PATH"]
 cpu_serial = getserial()
 data_json = download_url_data()
 station_type = ""
-device_id = ""
-device_key = ""
 
 if len(data_json) > 0:
     for item in data_json:
         if item['CPUSerial'] == cpu_serial:
             station_type = item['StationType']
-            device_id = item['AzureID']
-            device_key = item['AzureToken']
-
-print("Type:", station_type)
-print("Device ID:", device_id)
 
 #input file
 fin = open(current_path + "/template/constant.template", "r")
@@ -55,10 +48,6 @@ for line in fin:
         line_data = line.replace('root_path_replace', current_path)
     if line.find("station_type_replace") > -1:
         line_data = line.replace('station_type_replace', station_type)
-    if line.find("device_id_replace") > -1:
-        line_data = line.replace('device_id_replace', device_id)
-    if line.find("device_key_replace") > -1:
-        line_data = line.replace('device_key_replace', device_key)
         
     fout.write(line_data)
     
