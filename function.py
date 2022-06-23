@@ -1,3 +1,4 @@
+from tkinter.tix import Tree
 import constant
 import json
 import time
@@ -83,4 +84,33 @@ def read_serial_data(ser):
             return value
         else:
             return 0
+    return 0
+
+
+def pump_control(ser, data, state):
+    if state == True:
+        print("Pump turn ON")
+        sys.stdout.flush()
+    elif state == False:
+        print("Pump turn OFF")
+        sys.stdout.flush()
+    else:
+        print("Wrong state")
+        sys.stdout.flush()
+    return 0
+
+
+def water_pump(ser, milisecs):
+    data = [0x00, 0x01]
+    pump_control(ser, data, True)
+    time.sleep(milisecs)
+    pump_control(ser, data, False)
+    return 0
+
+
+def water_flush(ser, milisecs):
+    data = [0x00, 0x01]
+    pump_control(ser, data, True)
+    time.sleep(milisecs)
+    pump_control(ser, data, False)
     return 0
