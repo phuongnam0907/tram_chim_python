@@ -7,7 +7,7 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=~
 ExecStart=/usr/bin/python3 root_path_replace/main.py
-User=pi
+User=root
 
 Restart=on-failure
 
