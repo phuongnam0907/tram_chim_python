@@ -1,4 +1,3 @@
-from tkinter.tix import Tree
 import constant
 import json
 import time
@@ -107,7 +106,7 @@ def read_serial_data(ser):
     return 0
 
 
-def water_pump(ser, milisecs):
+def water_pump(ser, secs):
 
     dataOn = [15, 6, 0, 0, 0, 255, 200, 164]
     dataOff = [15, 6, 0, 0, 0, 0, 136, 228]
@@ -116,7 +115,7 @@ def water_pump(ser, milisecs):
     sys.stdout.flush()
     read_sensor_data(ser, dataOn)
 
-    time.sleep(milisecs)
+    time.sleep(secs)
 
     print("Pump OFF")
     sys.stdout.flush()
@@ -125,7 +124,7 @@ def water_pump(ser, milisecs):
     return 0
 
 
-def water_flush(ser, milisecs):
+def water_flush(ser, secs):
 
     dataOn = [0, 6, 0, 0, 0, 255, 200, 91]
     dataOff = [0, 6, 0, 0, 0, 0, 136, 27]
@@ -134,7 +133,7 @@ def water_flush(ser, milisecs):
     sys.stdout.flush()
     read_sensor_data(ser, dataOn)
 
-    time.sleep(milisecs)
+    time.sleep(secs)
 
     print("Flush OFF")
     sys.stdout.flush()

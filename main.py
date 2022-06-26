@@ -50,7 +50,7 @@ def send_telemetry(mqtt_client, serial_communication):
         sys.stdout.flush()
 
         # Pump water in 30 second
-        function.water_pump(serial_communication, 30000)
+        function.water_pump(serial_communication, 3)
 
         water_temperature = function.read_water_temperature(DEVICE_FILE)
         for index in range(0, len(sensor_array)):
@@ -58,7 +58,7 @@ def send_telemetry(mqtt_client, serial_communication):
             sensor_array[index].value = function.read_sensor_data(serial_communication, sensor_array[index].data)
 
         # Flush water in 30 second
-        function.water_flush(serial_communication, 30000)
+        function.water_flush(serial_communication, 3)
 
       else:
         print("No sensor data")
