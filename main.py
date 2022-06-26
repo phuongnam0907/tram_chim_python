@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from ast import Constant
 import os
 import sys
 import json
@@ -12,6 +13,9 @@ import function
 
 from datetime import date, timedelta, datetime
 
+os.system('dtoverlay w1-gpio gpiopin=14 pullup=0')
+time.sleep(5)
+
 BASE_DIR = '/sys/bus/w1/devices/'
 DEVICE_DIR = glob.glob(BASE_DIR + '28*')[0]
 DEVICE_FILE = DEVICE_DIR + '/w1_slave'
@@ -19,6 +23,8 @@ DEVICE_FILE = DEVICE_DIR + '/w1_slave'
 #####################################################
 # GLOBAL THERMOSTAT VARIABLES
 water_temperature = 0
+time_pump = 0
+time_flush = 0
 sensor_array = []
 
 data_payload = {
@@ -34,7 +40,7 @@ data_payload = {
 
 def send_telemetry(mqtt_client, serial_communication):
   global sensor_array
-  global water_temperature
+  global water_temperature, time_pump, time_flush
 
   print("Start sending telemetry - count sensor:", len(sensor_array))
   sys.stdout.flush()
@@ -49,16 +55,12 @@ def send_telemetry(mqtt_client, serial_communication):
         print("Read sensor...")
         sys.stdout.flush()
 
-        # Pump water in 30 second
-        function.water_pump(serial_communication, 3)
-
+        function.water_pump(serial_communication, time_pump)
         water_temperature = function.read_water_temperature(DEVICE_FILE)
         for index in range(0, len(sensor_array)):
           if const_var.STATION_TYPE == "WATER":
             sensor_array[index].value = function.read_sensor_data(serial_communication, sensor_array[index].data)
-
-        # Flush water in 30 second
-        function.water_flush(serial_communication, 3)
+        function.water_flush(serial_communication, time_flush)
 
       else:
         print("No sensor data")
@@ -80,7 +82,7 @@ def update_data_payload():
       json_object = {'sensor_key': item.key, 'sensor_value': item.get_value()}
       data_json_array.append(json_object)
 
-  data_json_array.append({'sensor_key': 'temperture', 'sensor_value': water_temperature})
+  data_json_array.append({'sensor_key': const_var.WATER_TEMPERATURE_KEY, 'sensor_value': water_temperature})
 
   data_payload["data_sensor"] = data_json_array
 
@@ -94,7 +96,7 @@ if __name__ == "__main__":
   os.system('modprobe w1-gpio')
   os.system('modprobe w1-therm')
 
-  sensor_array = function.parse_sensor_data()
+  sensor_array, time_pump, time_flush = function.parse_sensor_data()
 
   mqttClient = mqtt.Client()
   mqttClient.username_pw_set(const_var.MQTT_USERNAME, const_var.MQTT_PASSWORD)

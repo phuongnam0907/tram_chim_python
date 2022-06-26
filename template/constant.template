@@ -16,6 +16,9 @@ STATION_ID = "TCM-"
 
 WATER_TEMPERATURE_KEY = "temperature"
 
+DEFAULT_TIME_PUMP = 10
+DEFAULT_TIME_FLUSH = 120
+
 ########## REPLACE BY SETUP.PY!!!!!!
 CPU_SERIAL = "cpu_serial_replace"
 ROOT_PATH = "root_path_replace"

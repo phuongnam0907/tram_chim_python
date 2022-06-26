@@ -36,14 +36,23 @@ def parse_sensor_data():
     data_json = download_url_data()
     print("Json data", json.dumps(data_json))
     sys.stdout.flush()
-    object_array = data_json[find_index_from_key_value(data_json, "CPUSerial", constant.CPU_SERIAL)]['SensorData']
+    json_object = data_json[find_index_from_key_value(data_json, "CPUSerial", constant.CPU_SERIAL)]
+    try:
+        time_pump = json_object['TimeOutPump']
+    except:
+        time_pump = constant.DEFAULT_TIME_PUMP
+    try:
+        time_flush = json_object['TimeOutFlush']
+    except:
+        time_flush = constant.DEFAULT_TIME_FLUSH
+    object_array = json_object['SensorData']
     temp_array = []
     if len(object_array) > 0:
         for item in object_array:
             temp_array.append(Sensor(key=item['sensorMapKey'],
                                      data=item['sensorData']))
 
-    return temp_array
+    return temp_array, time_pump, time_flush
 
 
 def read_sensor_data(ser, data):
