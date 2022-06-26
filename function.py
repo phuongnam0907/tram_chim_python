@@ -18,7 +18,7 @@ class Sensor:
 
 
 def download_url_data():
-    r = requests.get(url=constant.URL_CALIBRATION)
+    r = requests.get(url=constant.URL_CALIBRATION, timeout=30)
     return r.json()
 
 
