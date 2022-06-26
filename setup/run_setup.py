@@ -60,7 +60,7 @@ fout.close()
 if os.path.exists("/etc/systemd/system/python_iot.service"):
     os.remove("/etc/systemd/system/python_iot.service")
 else:
-    print("The file does not exist")
+    print("The file does not exist - Create new file")
 
 #input file
 fin = open(current_path + "/template/python_iot.service.template", "r")

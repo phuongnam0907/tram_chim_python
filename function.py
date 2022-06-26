@@ -56,6 +56,26 @@ def read_sensor_data(ser, data):
         return 0
 
 
+def read_temp_raw(file_path):
+    f = open(file_path, 'r')
+    lines = f.readlines()
+    f.close()
+    return lines
+
+
+def read_water_temperature(file_path):
+    lines = read_temp_raw(file_path)
+
+    while lines[0].strip()[-3:] != 'YES':
+        time.sleep(0.2)
+        lines = read_temp_raw(file_path)
+
+    equals_pos = lines[1].find('t=')
+    if equals_pos != -1:
+        temp_string = lines[1][equals_pos + 2:]
+        temp_c = float(temp_string) / 1000.0
+        return round(temp_c, 2)
+
 def publish_data_to_mqtt_server(device_client, data):
     print("Publish data to MQTT Server")
     sys.stdout.flush()
@@ -87,30 +107,37 @@ def read_serial_data(ser):
     return 0
 
 
-def pump_control(ser, data, state):
-    if state == True:
-        print("Pump turn ON")
-        sys.stdout.flush()
-    elif state == False:
-        print("Pump turn OFF")
-        sys.stdout.flush()
-    else:
-        print("Wrong state")
-        sys.stdout.flush()
-    return 0
-
-
 def water_pump(ser, milisecs):
-    data = [0x00, 0x01]
-    pump_control(ser, data, True)
+
+    dataOn = [15, 6, 0, 0, 0, 255, 200, 164]
+    dataOff = [15, 6, 0, 0, 0, 0, 136, 228]
+
+    print("Pump ON")
+    sys.stdout.flush()
+    read_sensor_data(ser, dataOn)
+
     time.sleep(milisecs)
-    pump_control(ser, data, False)
+
+    print("Pump OFF")
+    sys.stdout.flush()
+    read_sensor_data(ser, dataOff)
+
     return 0
 
 
 def water_flush(ser, milisecs):
-    data = [0x00, 0x01]
-    pump_control(ser, data, True)
+
+    dataOn = [0, 6, 0, 0, 0, 255, 200, 91]
+    dataOff = [0, 6, 0, 0, 0, 0, 136, 27]
+
+    print("Flush ON")
+    sys.stdout.flush()
+    read_sensor_data(ser, dataOn)
+
     time.sleep(milisecs)
-    pump_control(ser, data, False)
+
+    print("Flush OFF")
+    sys.stdout.flush()
+    read_sensor_data(ser, dataOff)
+
     return 0
