@@ -44,6 +44,7 @@ def send_telemetry(mqtt_client, serial_communication):
 
   print("Start sending telemetry - count sensor:", len(sensor_array))
   sys.stdout.flush()
+  function.water_flush(serial_communication, time_flush)
   count_timer = const_var.TIME_CYCLE - 10
 
   while True:
