@@ -4,7 +4,7 @@ import os
 import requests
 
 def download_url_data():
-    URL = "https://ubc.sgp1.cdn.digitaloceanspaces.com/TramChimPark/Config/config.json"
+    URL = "https://ubc.sgp1.digitaloceanspaces.com/TramChimPark/Config/config.json"
     r = requests.get(url=URL, timeout=30)
     return r.json()
 

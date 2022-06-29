@@ -9,7 +9,7 @@ MQTT_USERNAME = "tram_chim"
 MQTT_PASSWORD = "TramChimMQTT..."
 MQTT_TOPIC = "/tram_chim_monitoring/dong_thap/"
 
-URL_CALIBRATION = "https://ubc.sgp1.cdn.digitaloceanspaces.com/TramChimPark/Config/config.json"
+URL_CALIBRATION = "https://ubc.sgp1.digitaloceanspaces.com/TramChimPark/Config/config.json"
 
 PROJECT_ID = "tram_chim_monitoring"
 STATION_ID = "TCM-"
