@@ -6,13 +6,10 @@ Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=~
-ExecStart=/usr/bin/python3 root_path_replace/main.py
+ExecStart=/usr/bin/python3 /home/pi/tram_chim_python/main.py
 User=pi
-
-Restart=always    
-
-[Timer]
-OnBootSec=3min
+ExecStartPre=/bin/sleep 30
+Restart=always
 
 [Install]
 WantedBy=multi-user.target network-online.target
