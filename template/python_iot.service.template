@@ -10,6 +10,7 @@ ExecStart=/usr/bin/python3 /home/pi/tram_chim_python/main.py
 User=pi
 ExecStartPre=/bin/sleep 30
 Restart=always
+RestartSec=10s
 
 [Install]
 WantedBy=multi-user.target network-online.target
