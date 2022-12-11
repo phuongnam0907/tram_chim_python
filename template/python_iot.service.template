@@ -9,7 +9,10 @@ WorkingDirectory=~
 ExecStart=/usr/bin/python3 root_path_replace/main.py
 User=pi
 
-Restart=on-failure
+Restart=always    
+
+[Timer]
+OnBootSec=3min
 
 [Install]
 WantedBy=multi-user.target network-online.target
